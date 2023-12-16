@@ -43,7 +43,7 @@ runs:
     - name: Set up JBang
       uses: jbangdev/setup-jbang@main
     - run: |
-        jbang --java 11 --repos quarkus-github-action='https://maven.pkg.github.com/gsmet/github-action-playground/' --repos 'mavencentral' io.github.gsmet:github-action-playground:1.0.0-SNAPSHOT
+        jbang --java 21 --repos quarkus-github-action='https://maven.pkg.github.com/gsmet/github-action-playground/' --repos 'mavencentral' io.github.gsmet:github-action-playground:1.0.0-SNAPSHOT
       id: action
       shell: bash
       env:
