@@ -14,13 +14,37 @@ outputs:
     value: ${{ steps.action.outputs.testKey }}
   testKey2:
     value: ${{ steps.action.outputs.testKey2 }}
+
+defaults:
+  run:
+    shell: bash
+
 runs:
   using: "composite"
   steps:
-    - run: curl -Ls https://sh.jbang.dev | bash -s - app setup
-      shell: bash
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin' # See 'Supported distributions' for available options
+        java-version: '21'
+    - name: Inject quarkus-github-action repository credentials
+      run: |
+        cat ~/.m2/settings.xml
+        if [ -f ~/.m2/settings.xml ]; then    
+          if ! grep -q '<id>quarkus-github-action</id>' ~/.m2/settings.xml; then
+            sed -i.bak 's@</servers>@<server><id>quarkus-github-action</id><username></username><password></password></server></servers>@' ~/.m2/settings.xml
+            cat ~/.m2/settings.xml
+          fi
+        else
+          mkdir -p ~/.m2/
+          cat <<EOF > ~/.m2/settings.xml
+          TEST
+          EOF
+          cat ~/.m2/settings.xml
+        fi
+    - name: Set up JBang
+      uses: jbangdev/setup-jbang@main
     - run: |
-        ~/.jbang/bin/jbang --verbose --repos github='https://maven.pkg.github.com/gsmet/github-action-playground/' --repos 'mavencentral' io.github.gsmet:github-action-playground:1.0.0-SNAPSHOT
+        jbang --java 11 --repos quarkus-github-action='https://maven.pkg.github.com/gsmet/github-action-playground/' --repos 'mavencentral' io.github.gsmet:github-action-playground:1.0.0-SNAPSHOT
       id: action
       shell: bash
       env:
