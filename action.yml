@@ -15,10 +15,6 @@ outputs:
   testKey2:
     value: ${{ steps.action.outputs.testKey2 }}
 
-defaults:
-  run:
-    shell: bash
-
 runs:
   using: "composite"
   steps:
@@ -27,6 +23,7 @@ runs:
         distribution: 'temurin' # See 'Supported distributions' for available options
         java-version: '21'
     - name: Inject quarkus-github-action repository credentials
+      shell: bash
       run: |
         cat ~/.m2/settings.xml
         if [ -f ~/.m2/settings.xml ]; then    
